@@ -114,7 +114,7 @@ public class MainActivityFragment extends Fragment {
                 listView.setAdapter(mArtistAdapter);
 
             } else {
-                CharSequence text = "No matching artists.";
+                CharSequence text = "No matching artists. Try refining search.";
                 Toast.makeText(getActivity(),text, Toast.LENGTH_LONG).show();
             }
 
