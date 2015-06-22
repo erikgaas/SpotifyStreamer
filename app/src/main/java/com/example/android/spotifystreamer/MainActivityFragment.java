@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -55,20 +56,19 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        EditText artistsListview = (EditText) rootView.findViewById(R.id.artist_search);
 
-        artistsListview.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        final SearchView searchView = (SearchView) rootView.findViewById(R.id.artist_search);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                FetchArtistsTask artistsTask = new FetchArtistsTask();
+                artistsTask.execute(query);
+                searchView.clearFocus();
+                return true;
+            }
 
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    CharSequence search = v.getText();
-                    FetchArtistsTask artistsTask = new FetchArtistsTask();
-                    artistsTask.execute(search.toString());
-
-                }
-
+            public boolean onQueryTextChange(String newText) {
                 return false;
             }
         });
