@@ -2,6 +2,8 @@ package com.example.android.spotifystreamer;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.Attributes;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Artist;
@@ -29,6 +33,7 @@ import kaaes.spotify.webapi.android.models.Tracks;
  * A placeholder fragment containing a simple view.
  */
 public class DetailActivityFragment extends Fragment {
+    @InjectView(R.id.tracks_listview) ListView listView;
 
     private TrackAdapter mTrackAdapter;
 
@@ -39,6 +44,7 @@ public class DetailActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        ButterKnife.inject(this, rootView);
 
         Intent intent = getActivity().getIntent();
         if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
@@ -49,6 +55,12 @@ public class DetailActivityFragment extends Fragment {
         }
         return rootView;
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
 
 
     public class FetchTracksTask extends AsyncTask<String, Void, Track[]> {
@@ -84,7 +96,6 @@ public class DetailActivityFragment extends Fragment {
                         R.layout.track_list_item,
                         tracks);
 
-                ListView listView = (ListView) getActivity().findViewById(R.id.tracks_listview);
                 listView.setAdapter(mTrackAdapter);
 
             } else {

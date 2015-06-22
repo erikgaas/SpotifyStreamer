@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Artist;
@@ -38,6 +40,8 @@ import kaaes.spotify.webapi.android.models.Image;
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
+    @InjectView(R.id.artist_search) SearchView searchView;
+    @InjectView(R.id.listview_artists) ListView listView;
 
     private ArtistAdapter mArtistAdapter;
 
@@ -55,9 +59,8 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        ButterKnife.inject(this, rootView);
 
-
-        final SearchView searchView = (SearchView) rootView.findViewById(R.id.artist_search);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -110,7 +113,6 @@ public class MainActivityFragment extends Fragment {
                         R.layout.artist_list_item,
                         artists);
 
-                ListView listView = (ListView) getActivity().findViewById(R.id.listview_artists);
                 listView.setAdapter(mArtistAdapter);
 
             } else {
@@ -118,7 +120,6 @@ public class MainActivityFragment extends Fragment {
                 Toast.makeText(getActivity(),text, Toast.LENGTH_LONG).show();
             }
 
-            ListView listView = (ListView) getActivity().findViewById(R.id.listview_artists);
             if (listView != null) {
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override

@@ -57,7 +57,7 @@ public class ArtistAdapter extends ArrayAdapter<Artist> {
         } else {
             Picasso.with(context).load("http://simpleicon.com/wp-content/uploads/music-note-7.png").into(holder.imgIcon);
         }
-        Log.v("BLABLALBLALBLA", artist.id);
+
         row.setTag(R.string.TAG_ID_ARTIST, artist.id);
 
         return row;
