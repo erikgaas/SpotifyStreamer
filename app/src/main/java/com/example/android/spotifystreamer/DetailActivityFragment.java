@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.Attributes;
@@ -36,6 +37,7 @@ public class DetailActivityFragment extends Fragment {
     @InjectView(R.id.tracks_listview) ListView listView;
 
     private TrackAdapter mTrackAdapter;
+    private ArrayList<ParcelTrack> parcelTracks;
 
     public DetailActivityFragment() {
     }
@@ -46,24 +48,39 @@ public class DetailActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         ButterKnife.inject(this, rootView);
 
-        Intent intent = getActivity().getIntent();
-        if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-            String artistId = intent.getStringExtra(Intent.EXTRA_TEXT);
+        if (savedInstanceState == null || !savedInstanceState.containsKey("Tracks")) {
+            Intent intent = getActivity().getIntent();
+            if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
+                String artistId = intent.getStringExtra(Intent.EXTRA_TEXT);
 
-            FetchTracksTask tracksTask = new FetchTracksTask();
-            tracksTask.execute(artistId);
+                FetchTracksTask tracksTask = new FetchTracksTask();
+                tracksTask.execute(artistId);
         }
+            }
+        else {
+            Log.v("Sucess", "We did it!");
+            parcelTracks = savedInstanceState.getParcelableArrayList("Tracks");
+            mTrackAdapter = new TrackAdapter(
+                    getActivity(),
+                    R.layout.track_list_item,
+                    parcelTracks);
+
+            listView.setAdapter(mTrackAdapter);
+        }
+
         return rootView;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList("Tracks", parcelTracks);
         super.onSaveInstanceState(outState);
+
     }
 
 
 
-    public class FetchTracksTask extends AsyncTask<String, Void, Track[]> {
+    public class FetchTracksTask extends AsyncTask<String, Void, ArrayList<ParcelTrack>> {
 
         SpotifyApi api = new SpotifyApi();
 
@@ -71,7 +88,7 @@ public class DetailActivityFragment extends Fragment {
 
 
         @Override
-        protected Track [] doInBackground(String... params) {
+        protected ArrayList<ParcelTrack> doInBackground(String... params) {
             String qString = params[0];
             Map country = new HashMap<String, Object>(1);
             country.put("country", "US");
@@ -79,7 +96,21 @@ public class DetailActivityFragment extends Fragment {
                 SpotifyService spotify = api.getService();
                 Tracks results = spotify.getArtistTopTrack(qString, country);
                 Track[] tracks = results.tracks.toArray(new Track[results.tracks.size()]);
-                return tracks;
+                parcelTracks = new ArrayList<ParcelTrack>();
+                for (int i=0; i < tracks.length; i++) {
+                    String trackImage;
+                    if (tracks[i].album.images.size() != 0) {
+                        trackImage = tracks[i].album.images.get(0).url;
+                    }
+                    else {
+                        trackImage = "http://simpleicon.com/wp-content/uploads/music-note-7.png";
+                    }
+                    parcelTracks.add(new ParcelTrack(
+                            trackImage,
+                            tracks[i].name,
+                            tracks[i].album.name));
+                }
+                return parcelTracks;
             } catch (Exception e) {
                 return null;
             }
@@ -88,13 +119,13 @@ public class DetailActivityFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(Track[] tracks) {
-            if (tracks != null && tracks.length != 0) {
+        protected void onPostExecute(ArrayList<ParcelTrack> parcelTracks) {
+            if (parcelTracks != null && parcelTracks.size() != 0) {
                 //Populate the adapter with the information
                 mTrackAdapter = new TrackAdapter(
                         getActivity(),
                         R.layout.track_list_item,
-                        tracks);
+                        parcelTracks);
 
                 listView.setAdapter(mTrackAdapter);
 

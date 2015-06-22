@@ -12,18 +12,20 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Track;
 
 /**
  * Created by erik on 6/21/15.
  */
-public class TrackAdapter extends ArrayAdapter<Track> {
+public class TrackAdapter extends ArrayAdapter<ParcelTrack> {
     Context context;
     int layoutResourceId;
-    Track data[] = null;
+    ArrayList<ParcelTrack> data = null;
 
-    public TrackAdapter(Context context, int layoutResourceId, Track[] data) {
+    public TrackAdapter(Context context, int layoutResourceId, ArrayList<ParcelTrack> data) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
@@ -50,16 +52,17 @@ public class TrackAdapter extends ArrayAdapter<Track> {
         else {
             holder = (ArtistHolder)row.getTag();
         }
-        Track track = data[position];
-        holder.trackName.setText(track.name);
-        holder.artistName.setText(track.album.name);
+        ParcelTrack track = data.get(position);
+        holder.trackName.setText(track.trackName);
+        holder.artistName.setText(track.albumName);
+        Picasso.with(context).load(track.imageUrl).into(holder.imgIcon);
 
-        kaaes.spotify.webapi.android.models.Image[] trackImages = track.album.images.toArray(new kaaes.spotify.webapi.android.models.Image[track.album.images.size()]);
+/*        kaaes.spotify.webapi.android.models.Image[] trackImages = track.album.images.toArray(new kaaes.spotify.webapi.android.models.Image[track.album.images.size()]);
         if (trackImages.length != 0) {
             Picasso.with(context).load(trackImages[0].url).into(holder.imgIcon);
         } else {
             Picasso.with(context).load("http://simpleicon.com/wp-content/uploads/music-note-7.png").into(holder.imgIcon);
-        }
+        }*/
 
 
         return row;

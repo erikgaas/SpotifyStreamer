@@ -35,7 +35,6 @@
         </activity>
         <activity
             android:name="com.example.android.spotifystreamer.DetailActivity"
-            android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_detail"
             android:parentActivityName="com.example.android.spotifystreamer.MainActivity" >
             <meta-data

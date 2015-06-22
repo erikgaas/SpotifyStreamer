@@ -9,18 +9,18 @@ import android.os.Parcelable;
 public class ParcelTrack implements Parcelable {
     String imageUrl;
     String trackName;
-    String artistName;
+    String albumName;
 
     public ParcelTrack(String imageUrl, String trackName, String artistName) {
         this.imageUrl = imageUrl;
         this.trackName = trackName;
-        this.artistName = artistName;
+        this.albumName = artistName;
     }
 
     private ParcelTrack(Parcel in) {
         imageUrl = in.readString();
         trackName = in.readString();
-        artistName = in.readString();
+        albumName = in.readString();
     }
 
     public int describeContents() {
@@ -30,7 +30,7 @@ public class ParcelTrack implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(imageUrl);
         dest.writeString(trackName);
-        dest.writeString(artistName);
+        dest.writeString(albumName);
     }
 
     public static final Parcelable.Creator<ParcelTrack> CREATOR = new Parcelable.Creator<ParcelTrack>() {
